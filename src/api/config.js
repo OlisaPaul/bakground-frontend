@@ -2,7 +2,7 @@
 
 const API_BASE =
   import.meta.env.MODE === "production"
-    ? "https://170.9.234.156/api"
-    : "http://170.9.234.156/api";
+    ? "https://background-job.duckdns.org/api"
+    : "https://background-job.duckdns.org/api";
 
 export default API_BASE;
