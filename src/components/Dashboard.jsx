@@ -8,15 +8,15 @@ import API_BASE from "../api/config";
 import { useNavigate } from "react-router-dom";
 import { FaTrash, FaRedo, FaEdit, FaDownload } from "react-icons/fa";
 
-// Dynamically determine WebSocket URL based on current location and fallback to 9000 if 8000 fails
+// Dynamically determine WebSocket URL based on API_BASE
 function getWebSocketUrl() {
-  const loc = window.location;
-  let wsProtocol = loc.protocol === "https:" ? "wss:" : "ws:";
-  let wsHost = loc.hostname;
-  let wsPort = loc.port || (loc.protocol === "https:" ? "443" : "80");
-  // Try 8000 first, fallback to 9000 if needed
-  if (wsPort === "5173") wsPort = "8000";
-  return `${wsProtocol}//${wsHost}:${wsPort}/ws/jobs/status/`;
+  // Use API_BASE to determine host and protocol
+  let base = API_BASE;
+  let wsProtocol = base.startsWith("https") ? "wss" : "ws";
+  base = base.replace(/^https?/, wsProtocol);
+  // Remove trailing /api if present, then add /ws/jobs/status/
+  base = base.replace(/\/api\/?$/, "");
+  return `${base}/ws/jobs/status/`;
 }
 
 function Dashboard() {
