@@ -2,7 +2,7 @@
 
 const API_BASE =
   import.meta.env.MODE === "production"
-    ? "http://170.9.234.156/api"
+    ? "https://170.9.234.156/api"
     : "http://localhost:8000/api";
 
 export default API_BASE;
