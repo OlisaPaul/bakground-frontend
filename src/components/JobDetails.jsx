@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Placeholder from "react-bootstrap/Placeholder";
+import { FaTrash, FaRedo } from "react-icons/fa";
 import API_BASE from "../api/config";
 
 function JobDetails() {
@@ -61,6 +62,27 @@ function JobDetails() {
     } catch (err) {
       alert(err.message || "Failed to download file.");
     }
+  }
+
+  // Retry job handler
+  function handleRetry() {
+    fetch(`${API_BASE}/jobs/${id}/retry/`, { method: "POST" })
+      .then((res) => {
+        if (res.ok) {
+          // Refetch job details after retry
+          return fetch(`${API_BASE}/jobs/${id}/`).then((r) => r.json());
+        } else {
+          return res.json().then((data) => {
+            throw new Error(data.error || "Failed to retry job.");
+          });
+        }
+      })
+      .then((data) => {
+        setJob(data);
+      })
+      .catch((err) => {
+        alert(err.message || "Failed to retry job.");
+      });
   }
 
   // Helper to humanize job type
@@ -130,19 +152,38 @@ function JobDetails() {
           }}
           className="shadow"
         >
-          <Button
-            variant="danger"
+          <div
             style={{
               position: "absolute",
               top: 16,
               right: 16,
               zIndex: 2,
+              display: "flex",
+              gap: 12,
             }}
-            onClick={handleDelete}
-            disabled={deleting}
           >
-            {deleting ? "Deleting..." : "Delete"}
-          </Button>
+            {job.status === "failed" && (
+              <Button
+                variant="secondary"
+                title="Retry"
+                size="sm"
+                onClick={handleRetry}
+                style={{ padding: 6, marginRight: 4 }}
+              >
+                <FaRedo />
+              </Button>
+            )}
+            <Button
+              variant="danger"
+              title="Delete"
+              size="sm"
+              onClick={handleDelete}
+              disabled={deleting}
+              style={{ padding: 6 }}
+            >
+              <FaTrash />
+            </Button>
+          </div>
           <Card.Body>
             <Card.Title as="h3" className="mb-3 text-center">
               Job Details
