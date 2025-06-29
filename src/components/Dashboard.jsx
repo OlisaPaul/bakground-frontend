@@ -7,6 +7,7 @@ import JobStatsChart from "./JobStatsChart";
 import API_BASE from "../api/config";
 import { useNavigate } from "react-router-dom";
 import { FaTrash, FaRedo, FaEdit, FaDownload } from "react-icons/fa";
+import Placeholder from "react-bootstrap/Placeholder";
 
 // Dynamically determine WebSocket URL based on API_BASE
 function getWebSocketUrl() {
@@ -28,10 +29,12 @@ function Dashboard() {
   const [statsKey, setStatsKey] = useState(0); // For forcing JobStatsChart re-render
   const [jobTypeFilter, setJobTypeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [loading, setLoading] = useState(true);
   const wsRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    setLoading(true);
     fetchJobs(page);
     // WebSocket connection
     let wsUrl = getWebSocketUrl();
@@ -71,6 +74,7 @@ function Dashboard() {
         setCount(data.count || 0);
         setNext(data.next);
         setPrevious(data.previous);
+        setLoading(false);
       });
   }
 
@@ -151,6 +155,62 @@ function Dashboard() {
     { value: "completed", label: "Completed" },
     { value: "failed", label: "Failed" },
   ];
+
+  if (loading) {
+    return (
+      <Container
+        fluid
+        className="app-main-bg mt-4"
+        style={{
+          minHeight: "90vh",
+          width: "100vw",
+          maxWidth: "100vw",
+          padding: 0,
+          overflowX: "hidden",
+        }}
+      >
+        <Card className="shadow-sm" style={{ border: "none" }}>
+          <Card.Body>
+            <div className="row flex-column flex-md-row">
+              <div className="col-12 col-md-8 pe-md-5 mb-4 mb-md-0">
+                <Placeholder as="div" animation="wave">
+                  <Placeholder xs={3} className="mb-3" />
+                  <Table striped bordered hover responsive>
+                    <thead>
+                      <tr>
+                        <th>SNO</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Scheduled Type</th>
+                        <th>Action</th>
+                        <th>Download</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...Array(5)].map((_, i) => (
+                        <tr key={i}>
+                          {Array.from({ length: 6 }).map((_, j) => (
+                            <td key={j}>
+                              <Placeholder animation="wave">
+                                <Placeholder xs={8} />
+                              </Placeholder>
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </Placeholder>
+              </div>
+              <div className="col-12 col-md-4 d-flex align-items-center justify-content-center justify-content-md-end ps-md-5">
+                <JobStatsChart key={statsKey} />
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
+      </Container>
+    );
+  }
 
   return (
     <Container

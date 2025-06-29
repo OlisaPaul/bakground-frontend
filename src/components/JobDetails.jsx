@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+import Placeholder from "react-bootstrap/Placeholder";
 import API_BASE from "../api/config";
 
 function JobDetails() {
@@ -74,7 +75,34 @@ function JobDetails() {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
+  if (loading)
+    return (
+      <div
+        className="app-main-bg d-flex justify-content-center align-items-center"
+        style={{ minHeight: "90vh", width: "100vw" }}
+      >
+        <Card
+          style={{ minWidth: 400, maxWidth: 600, width: "100%" }}
+          className="shadow"
+        >
+          <Card.Body>
+            <Card.Title as="h3" className="mb-3 text-center">
+              <Placeholder animation="wave">
+                <Placeholder xs={6} />
+              </Placeholder>
+            </Card.Title>
+            {[...Array(8)].map((_, i) => (
+              <div className="mb-3" key={i}>
+                <Placeholder animation="wave">
+                  <Placeholder xs={3} /> <Placeholder xs={7} />
+                </Placeholder>
+              </div>
+            ))}
+            <Placeholder.Button variant="secondary" xs={12} />
+          </Card.Body>
+        </Card>
+      </div>
+    );
   if (error) return <div className="text-danger text-center mt-5">{error}</div>;
   if (!job) return null;
 
@@ -145,9 +173,9 @@ function JobDetails() {
             <div className="mb-3">
               <strong>Schedule Type:</strong> {capitalize(job.schedule_type)}
             </div>
-            <div className="mb-3">
+            {/* <div className="mb-3">
               <strong>Priority:</strong> {capitalize(job.priority)}
-            </div>
+            </div> */}
             <div className="mb-3">
               <strong>Retries:</strong> {job.retries} / {job.max_retries}
             </div>

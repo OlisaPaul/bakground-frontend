@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import "chart.js/auto";
 import API_BASE from "../api/config";
+import Spinner from "react-bootstrap/Spinner";
 
 function JobStatsChart() {
   const [stats, setStats] = useState(null);
@@ -21,7 +22,27 @@ function JobStatsChart() {
       });
   }, []);
 
-  if (loading) return <div>Loading stats...</div>;
+  if (loading)
+    return (
+      <div
+        style={{
+          maxWidth: 350,
+          margin: "0 auto",
+          minHeight: 350,
+        }}
+        className="d-flex flex-column align-items-center justify-content-center"
+      >
+        <Spinner
+          animation="border"
+          role="status"
+          variant="primary"
+          style={{ width: 48, height: 48, marginBottom: 16 }}
+        >
+          <span className="visually-hidden">Loading stats...</span>
+        </Spinner>
+        <div>Loading stats...</div>
+      </div>
+    );
   if (error) return <div style={{ color: "red" }}>{error}</div>;
   if (!stats) return null;
 
